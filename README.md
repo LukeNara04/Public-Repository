@@ -1,4 +1,4 @@
-# APPLICATION WRITTEN IN PROCESSING
+# Applications written in processing
 
 Telemetry application
 
