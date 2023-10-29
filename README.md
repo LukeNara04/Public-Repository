@@ -1,2 +1,5 @@
-# Victory-2
-Victory 2 rocket
+# APPLICATION WRITTEN IN PROCESSING
+
+Telemetry application
+
+Load cell application
