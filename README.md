@@ -1,5 +1,3 @@
-# Applications written in processing
+# This is the public repository for ln_space
 
-Telemetry application
 
-Load cell application
