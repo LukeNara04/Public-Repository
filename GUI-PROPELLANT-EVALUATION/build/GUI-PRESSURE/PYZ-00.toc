@@ -1,4 +1,4 @@
-('C:\\Users\\lucan\\Desktop\\build\\GUI-PRESSURE\\PYZ-00.pyz',
+('C:\\Users\\lucan\\Desktop\\LN_space\\Public-Repository\\GUI-PROPELLANT-EVALUATION\\build\\GUI-PRESSURE\\PYZ-00.pyz',
  [('PIL',
    'C:\\Users\\lucan\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\PIL\\__init__.py',
    'PYMODULE'),

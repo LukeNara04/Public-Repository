@@ -15,6 +15,10 @@ pressure = deque(maxlen=200)
 # LOCK FOR SHARED RESOURCES
 data_lock = threading.Lock()
 
+# OPEN FILE TO SAVE DATA (CSV-like format with .txt extension)
+output_file = open('time_pressure_data.txt', 'w')
+output_file.write("Time [s], Pressure [PSI]\n")  # Header for the file
+
 # FUNCTION TO READ DATA FROM SERIAL PORT
 def read_serial_data():
     while True:
@@ -26,8 +30,13 @@ def read_serial_data():
             # Ensure the data is valid (time and pressure)
             if len(data) == 2:
                 with data_lock:
-                    time.append(float(data[0])/1000)     # Time in seconds (or any unit)
-                    pressure.append(float(data[1]))      # Pressure in psi 
+                    # Append data to deques
+                    time.append(float(data[0]) / 1000)  # Time in seconds (or any unit)
+                    pressure.append(float(data[1]))     # Pressure in psi
+                    
+                    # Write the data to the output file
+                    output_file.write(f"{float(data[0])/1000}, {float(data[1])}\n")
+                    output_file.flush()  # Ensure data is written immediately to the file
         except Exception as e:
             print(f"Error reading serial data: {e}")
 
@@ -67,5 +76,6 @@ ani = animation.FuncAnimation(fig, animate, interval=100)
 plt.tight_layout()
 plt.show()
 
-# END SERIAL TRANSMISSION (will only trigger when plot window is closed)
+# END SERIAL TRANSMISSION AND CLOSE FILE WHEN PLOT WINDOW CLOSES
 ser.close()
+output_file.close()
