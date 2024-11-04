@@ -6,7 +6,7 @@ from collections import deque
 import threading
 
 # SERIAL PORT CONFIGURATION
-ser = serial.Serial('COM3', 115200)  
+ser = serial.Serial('COM4', 115200)  
 
 # DEQUES TO STORE TIME AND PRESSURE DATA
 time = deque(maxlen=500)
