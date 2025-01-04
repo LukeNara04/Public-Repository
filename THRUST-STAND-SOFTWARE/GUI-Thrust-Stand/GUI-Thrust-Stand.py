@@ -31,11 +31,11 @@ def read_serial():
             if len(data) == 2:
                 with data_lock:
                     # Append data to deques
-                    time.append(float(data[0]) / 1000)  # Time in seconds 
+                    time.append(float(data[0]))  # Time in seconds 
                     thrust.append(float(data[1]))     # Thrust in newtons
                     
                     # Write the data to the output file
-                    output_file.write(f"{float(data[0])/1000}, {float(data[1])}\n")
+                    output_file.write(f"{float(data[0])}, {float(data[1])}\n")
                     output_file.flush()  # Ensure data is written immediately to the file
         except Exception as e:
             print(f"Error reading serial data: {e}")

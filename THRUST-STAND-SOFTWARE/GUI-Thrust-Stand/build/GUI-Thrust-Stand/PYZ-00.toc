@@ -1,4 +1,4 @@
-('C:\\Users\\lucan\\Desktop\\LN_space\\Public-Repository\\THRUST-STAND-SOFTWARE\\GUI-Thrust-Stand\\build\\GUI-Thrust-Stand\\PYZ-00.pyz',
+('C:\\Users\\lucan\\Desktop\\GITHUB-lnspace\\Public-Repository\\THRUST-STAND-SOFTWARE\\GUI-Thrust-Stand\\build\\GUI-Thrust-Stand\\PYZ-00.pyz',
  [('PIL',
    'C:\\Users\\lucan\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\PIL\\__init__.py',
    'PYMODULE'),

@@ -6,7 +6,7 @@
 #include <HX711_ADC.h>
 
 /*EEPROM*/
-#if defined(ESP8266)|| defined(ESP32) || defined(AVR)
+#if defined(ESP8266) || defined(ESP32) || defined(AVR)
 #include <EEPROM.h>
 #endif
 
@@ -17,24 +17,23 @@ const int HX711_sck = 5;
 HX711_ADC LoadCell(HX711_dout, HX711_sck);
     
 const int calVal_eepromAdress = 0;
-unsigned long t = 0;
 unsigned long stabilizingtime = 2000;
 
 int GREEN = 6;
 int BUZZER = 8;
 
 boolean _tare = true;
+bool start = false;
 static boolean newDataReady = 0;
 
 /*CONSTANTS AND VARIABLES*/
 float thrust = 0;
+float time = 0;                  // Initialize time to 0
+unsigned long time_new = 0;      // Variable to store current time
+unsigned long time_old = 0;      // Variable to store previous time
 float calibrationValue;
-const int serialPrintInterval = 10; 
-
-/*TIME*/
-float time;
+const int serialPrintInterval = 1; 
   
-
 /*SETUP*/
 void setup() {
   Serial.begin(115200);
@@ -45,7 +44,7 @@ void setup() {
   Serial.println("Starting communication...");
   Serial.flush();
 
-  delay(500);
+  delay(250);
 
   LoadCell.begin();
   EEPROM.get(calVal_eepromAdress, calibrationValue);
@@ -60,39 +59,43 @@ void setup() {
     Serial.println("Startup is complete");
     digitalWrite(GREEN, HIGH);
     digitalWrite(BUZZER, HIGH);
-    delay(500);
+    delay(250);
     digitalWrite(BUZZER, LOW);
-    delay(500);
+    delay(250);
     digitalWrite(BUZZER, HIGH);
-    delay(500);
+    delay(250);
     digitalWrite(BUZZER, LOW);
-    delay(500);
+    delay(250);
     digitalWrite(BUZZER, HIGH);
-    delay(500);
+    delay(250);
     digitalWrite(BUZZER, LOW);
   }
-
-
 }
 
 /*LOOP*/
 void loop() {
-  Serial.flush();
-  if (LoadCell.update()) newDataReady = true;
+  if (LoadCell.update()) {
+    newDataReady = true;
+  }
 
-  if (newDataReady) {
+  if (newDataReady){                      
+    thrust = LoadCell.getData() / 1000 * 9.81;     // Calculate thrust
+    if (thrust >= 0.2) {
+      if(start == false){
+        time_old = millis();
+      }
+      time_new = millis();                           // Get the current time
+      start = true;
     
-      /*LOADCELL READING*/
-      thrust = LoadCell.getData()/1000*9.81;
+      time += (time_new - time_old) / 1000.0;        // Convert ms to seconds for `time`
+      time_old = time_new;                           // Update the previous time
 
-      float data[2] = {time,thrust};
-
-      Serial.print(data[0]);
+      Serial.print(time, 3);                         // Print time with 3 decimal places
       Serial.print(",");
-      Serial.println(data[1]);
-      
-      newDataReady = 0;
-      time = time + 101;
+      Serial.println(thrust, 3);                     // Print thrust with 3 decimal places
+
+      newDataReady = false;                          // Reset the flag
+    }
   } 
 }
 
