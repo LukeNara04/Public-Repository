@@ -6,7 +6,7 @@ from collections import deque
 import threading
 
 # SERIAL PORT CONFIGURATION
-ser = serial.Serial('COM4', 115200)  
+ser = serial.Serial('COM5', 115200)  
 
 # DEQUES TO STORE TIME AND PRESSURE DATA
 time = deque(maxlen=500)
@@ -31,11 +31,11 @@ def read_serial_data():
             if len(data) == 2:
                 with data_lock:
                     # Append data to deques
-                    time.append(float(data[0]) / 1000)  # Time in seconds (or any unit)
+                    time.append(float(data[0]))  # Time in seconds (or any unit)
                     pressure.append(float(data[1]))     # Pressure in psi
                     
                     # Write the data to the output file
-                    output_file.write(f"{float(data[0])/1000}, {float(data[1])}\n")
+                    output_file.write(f"{float(data[0])}, {float(data[1])}\n")
                     output_file.flush()  # Ensure data is written immediately to the file
         except Exception as e:
             print(f"Error reading serial data: {e}")

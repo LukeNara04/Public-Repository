@@ -1,4 +1,4 @@
-/*THRUST STAND MACHINE CODE*/
+/*THRUST STAND MACHINE CODE* 10Hz/
 
 /*LIBRARIES*/
 #include <Wire.h>
@@ -23,10 +23,10 @@ int GREEN = 6;
 int BUZZER = 8;
 
 boolean _tare = true;
-bool start = false;
 static boolean newDataReady = 0;
 
 /*CONSTANTS AND VARIABLES*/
+bool start = false;
 float thrust = 0;
 float time = 0;                  // Initialize time to 0
 unsigned long time_new = 0;      // Variable to store current time
@@ -80,7 +80,7 @@ void loop() {
 
   if (newDataReady){                      
     thrust = LoadCell.getData() / 1000 * 9.81;     // Calculate thrust
-    if (thrust >= 0.2) {
+    if (thrust >= 0.2){
       if(start == false){
         time_old = millis();
       }

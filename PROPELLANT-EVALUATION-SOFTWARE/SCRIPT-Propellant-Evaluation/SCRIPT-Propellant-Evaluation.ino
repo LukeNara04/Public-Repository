@@ -1,4 +1,4 @@
-/*PROPELLANT EVALUATION MACHINE CODE*/
+/*PROPELLANT EVALUATION MACHINE CODE* 20Hz/
 
 /*PINS AND OBJECTS*/
 int RED = 2;
@@ -17,10 +17,12 @@ float zeroPressure = 0;                     /* Calibration value in pressure */
 
 int sensorValue;
 float sensorVoltage;
-float pressure;
 
-/*TIME*/
-float time;
+bool start = false;
+float pressure = 0;
+float time = 0;
+unsigned long time_new = 0;
+unsigned long time_old = 0;
 
 void setup() {
   Serial.begin(115200); 
@@ -31,39 +33,42 @@ void setup() {
   Serial.println("Starting communication...");
   Serial.flush();
 
-  delay(500);
+  delay(250+2000);
   zeroValue = analogRead(sensorPin);
   zeroVoltage = (zeroValue / analogMax) * supplyVoltage;
   zeroPressure = ((zeroVoltage - voltageAtZeroPressure) / sensorVoltageRange) * sensorMaxPressure;
   Serial.println("Startup is complete");
   digitalWrite(RED, HIGH);
   digitalWrite(BUZZER, HIGH);
-  delay(500);
+  delay(250);
   digitalWrite(BUZZER, LOW);
-  delay(500);
+  delay(250);
   digitalWrite(BUZZER, HIGH);
-  delay(500);
+  delay(250);
   digitalWrite(BUZZER, LOW);
-  delay(500);
+  delay(250);
   digitalWrite(BUZZER, HIGH);
-  delay(500);
+  delay(250);
   digitalWrite(BUZZER, LOW);
 }
 
 void loop() {
-  Serial.flush();
-
-  /*PRESSURE TRANSDUCER READING*/
   sensorValue = analogRead(sensorPin);
   sensorVoltage = (sensorValue / analogMax) * supplyVoltage;
   pressure = ((sensorVoltage - voltageAtZeroPressure) / sensorVoltageRange) * sensorMaxPressure - zeroPressure; 
-  
-  float data[2] = {time,pressure};
+  if (pressure >= 2.0){
+    if(start == false){
+      time_old = millis();
+    }
+    time_new = millis();
+    start = true;
 
-  Serial.print(data[0]);
-  Serial.print(",");
-  Serial.println(data[1]);
-
-  delay(10);
-  time = time + 12.73;
+    time += (time_new - time_old) / 1000.0;
+    time_old = time_new;
+    
+    Serial.print(time,3);
+    Serial.print(",");
+    Serial.println(pressure,3);
+    delay(48.67);
+  }
 }
