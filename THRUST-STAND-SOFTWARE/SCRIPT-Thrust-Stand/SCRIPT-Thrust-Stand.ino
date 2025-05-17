@@ -107,9 +107,9 @@ void loop() {
 
   float thrust = LoadCell.getData() / 1000.00 * 9.80665;
 
-  Serial.print(ts);
+  Serial.print(ts,3);
   Serial.print(',');
-  Serial.println(thrust);
+  Serial.println(thrust,3);
 
   ts += dt;                                       
 }
