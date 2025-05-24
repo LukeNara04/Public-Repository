@@ -22,8 +22,8 @@ unsigned long dt_us = 0.0;
 unsigned long now_us = 0.0;
 unsigned long stabilizingtime = 2000;
 
-int GREEN = 6;
-int BUZZER = 8;
+int GREEN = 5;
+int BUZZER = 11;
 
 boolean _tare = true;
 static boolean newDataReady = 0;
@@ -37,6 +37,20 @@ float thrust = 0;
 float calibrationValue;
 const int serialPrintInterval = 10; 
 unsigned long LOOP_PERIOD_US = 20000;   // 20 ms  → 50 Hz
+const int sensorPin = A0;                   /* Pin where the pressure transducer is connected */
+const float sensorMaxPressure = 200.0;      /* Maximum pressure of the transducer (in PSI) */
+const float analogMax = 1023.0;             /* Maximum analog value (10-bit ADC) */
+const float voltageAtZeroPressure = 0.5;    /* Voltage output from sensor at 0 PSI (adjust if needed) */
+const float sensorVoltageRange = 4.5;       /* Voltage output range from sensor (0.5V to 4.5V) */
+const float supplyVoltage = 5.0;            /* Supply Voltage for the sensor (5V)*/
+float zeroValue = 0;                        /* Calibration value for each measurement (adjusted for temperature and external conditions) */
+float zeroVoltage = 0;                      /* Calibration value in voltage */
+float zeroPressure = 0;   
+
+int sensorValue;
+float sensorVoltage;
+float pressure = 0;
+
 
 /* ---- globals ---- */
 float ts_last_us = 0.0;   // time of previous loop() start
@@ -70,19 +84,25 @@ void setup() {
   else {
     LoadCell.setCalFactor(calibrationValue);
     Serial.println("Startup is complete");
+    digitalWrite(BUZZER, HIGH);
+    delay(200);
+    digitalWrite(BUZZER, LOW);
+    delay(200);
+    digitalWrite(BUZZER, HIGH);
+    delay(200);
+    digitalWrite(BUZZER, LOW);
+    delay(200);
+    digitalWrite(BUZZER, HIGH);
+    delay(200);
+    digitalWrite(BUZZER, LOW);
+    delay(500);
     digitalWrite(GREEN, HIGH);
-    digitalWrite(BUZZER, HIGH);
-    delay(500);
-    digitalWrite(BUZZER, LOW);
-    delay(500);
-    digitalWrite(BUZZER, HIGH);
-    delay(500);
-    digitalWrite(BUZZER, LOW);
-    delay(500);
-    digitalWrite(BUZZER, HIGH);
-    delay(500);
-    digitalWrite(BUZZER, LOW);
   }
+
+  zeroValue = analogRead(sensorPin);
+  zeroVoltage = (zeroValue / analogMax) * supplyVoltage;
+  zeroPressure = ((zeroVoltage - voltageAtZeroPressure) / sensorVoltageRange) * sensorMaxPressure;
+  
   ts_last_us = micros(); 
 
 
@@ -94,7 +114,7 @@ void loop() {
   now_us = micros();
   dt_us = now_us - ts_last_us;        // elapsed time (µs)
 
-  if (dt_us < LOOP_PERIOD_US) {                      // still too early?
+  if (dt_us < LOOP_PERIOD_US) {                     // still too early?
     delayMicroseconds(LOOP_PERIOD_US - dt_us);       // busy‑wait remainder
     now_us = micros();                               // refresh after wait
     dt_us  = now_us - ts_last_us;
